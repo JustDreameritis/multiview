@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "multiview"
+version = "0.1.0"
+description = "Multi-model AI code review from your terminal"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+authors = [{name = "JustDreameritis"}]
+keywords = ["code-review", "ai", "llm", "security", "static-analysis"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Software Development :: Quality Assurance",
+]
+dependencies = [
+    "litellm>=1.40.0",
+    "click>=8.0",
+    "pyyaml>=6.0",
+    "rich>=13.0",
+]
+
+[project.scripts]
+multiview = "multiview.cli:main"
+
+[project.urls]
+Repository = "https://github.com/JustDreameritis/multiview"
+
+[tool.setuptools.packages.find]
+where = ["src"]
