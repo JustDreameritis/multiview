@@ -79,6 +79,8 @@ Walks you through getting free API keys from each provider. Direct links to sign
 
 ## Usage
 
+### Code Review
+
 ```bash
 # Review a file
 multiview review app.py
@@ -98,6 +100,30 @@ multiview review app.py --model security --model performance
 # Check which reviewers are active
 multiview status
 ```
+
+### Multi-Perspective Questions
+
+```bash
+# Ask a question to 6 specialist perspectives
+multiview ask "What causes inflation?"
+
+# JSON output
+multiview ask "Should I use microservices?" --json
+```
+
+Each question is analyzed by 6 perspectives in parallel:
+- **Factual Analyst** — verifies claims, cites established knowledge
+- **Devil's Advocate** — challenges assumptions, finds weaknesses
+- **Practical Advisor** — focuses on what you should actually DO
+- **Technical Expert** — provides deep domain knowledge
+- **Risk Assessor** — identifies what could go wrong
+- **Synthesizer** — merges all views into balanced answer
+
+Output shows each perspective, then a **CONSENSUS** section with:
+- What they agree on
+- Where they disagree
+- Synthesized answer
+- Confidence score (HIGH/MEDIUM/LOW)
 
 ## Output formats
 
