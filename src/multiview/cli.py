@@ -22,6 +22,7 @@ from .config import (
 )
 from .engine import run_review
 from .output import render_json, render_markdown, render_terminal
+from .ask_engine import ask, get_configured_perspectives, ASK_PERSPECTIVES
 
 console = Console()
 
@@ -165,6 +166,84 @@ def review(target: str, output_json: bool, output_md: bool, filter_model: tuple[
         elif output_md:
             findings, timings = run_review(code, rel_path, reviewers)
             click.echo(render_markdown(findings, timings, rel_path))
+
+
+@main.command("ask")
+@click.argument("question")
+@click.option("--json", "output_json", is_flag=True, help="Output as JSON")
+def ask_command(question: str, output_json: bool):
+    """Ask a question to multiple AI perspectives in parallel.
+
+    QUESTION: The question to analyze from multiple angles.
+
+    Example: multiview ask "What causes inflation?"
+    """
+    from rich.panel import Panel
+    from rich.markdown import Markdown
+    import json
+
+    perspectives = get_configured_perspectives()
+    if not perspectives:
+        console.print("[red]No perspectives available. Run 'multiview setup' first.[/]")
+        sys.exit(1)
+
+    console.print(f"\n[bold]multiview ask[/] — {len(perspectives)} perspectives\n")
+    console.print(f"[dim]Question:[/] {question}\n")
+
+    def on_done(name, success, elapsed):
+        if success:
+            console.print(f"  [green]OK[/]  {name:18s}  {elapsed:.1f}s")
+        else:
+            console.print(f"  [red]ERR[/] {name:18s}  {elapsed:.1f}s")
+
+    responses, consensus = ask(question, on_perspective_done=on_done)
+
+    if output_json:
+        data = {
+            "question": question,
+            "perspectives": [
+                {
+                    "name": r.name,
+                    "response": r.response,
+                    "elapsed": r.elapsed,
+                    "success": r.success,
+                }
+                for r in responses
+            ],
+            "consensus": consensus,
+        }
+        click.echo(json.dumps(data, indent=2))
+        return
+
+    # Terminal output
+    console.print("\n" + "=" * 70 + "\n")
+
+    for r in responses:
+        if r.success:
+            console.print(Panel(
+                r.response,
+                title=f"[bold]{r.name}[/] ({r.elapsed:.1f}s)",
+                border_style="blue",
+            ))
+        else:
+            console.print(Panel(
+                f"[red]{r.response}[/]",
+                title=f"[bold]{r.name}[/] (failed)",
+                border_style="red",
+            ))
+
+    # Consensus section
+    console.print("\n" + "=" * 70)
+    console.print(Panel(
+        Markdown(consensus),
+        title="[bold yellow]CONSENSUS[/]",
+        border_style="yellow",
+    ))
+
+    # Summary
+    successful = sum(1 for r in responses if r.success)
+    total_time = sum(r.elapsed for r in responses)
+    console.print(f"\n  [dim]{successful}/{len(responses)} perspectives responded | Total time: {total_time:.1f}s[/]\n")
 
 
 if __name__ == "__main__":
