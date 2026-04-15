@@ -147,15 +147,12 @@ def review(target: str, output_json: bool, output_md: bool, filter_model: tuple[
 
         if not output_json and not output_md:
             console.print(f"\n[bold]Reviewing {rel_path}[/] with {len(reviewers)} models...\n")
-            status_lines: dict[str, str] = {}
 
             def on_done(name, success, elapsed, count=0):
                 if success:
-                    status_lines[name] = f"  [green]OK[/]  {name:15s}  {elapsed:.1f}s  ({count} findings)"
+                    console.print(f"  [green]OK[/]  {name:15s}  {elapsed:.1f}s  ({count} findings)")
                 else:
-                    status_lines[name] = f"  [red]ERR[/] {name:15s}  {elapsed:.1f}s  (failed)"
-                for line in status_lines.values():
-                    console.print(line)
+                    console.print(f"  [red]ERR[/] {name:15s}  {elapsed:.1f}s  (failed)")
 
             findings, timings = run_review(code, rel_path, reviewers, on_reviewer_done=on_done)
             console.print()

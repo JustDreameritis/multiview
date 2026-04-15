@@ -57,6 +57,9 @@ def _set_api_keys():
         "gemini": "GEMINI_API_KEY",
         "openrouter": "OPENROUTER_API_KEY",
         "huggingface": "HUGGINGFACE_API_KEY",
+        "anthropic": "ANTHROPIC_API_KEY",
+        "xai": "XAI_API_KEY",
+        "deepseek": "DEEPSEEK_API_KEY",
     }
     for provider, env_var in env_map.items():
         if keys.get(provider) and not os.environ.get(env_var):

@@ -36,6 +36,21 @@ PROVIDERS: dict[str, dict] = {
         "signup_url": "https://huggingface.co/settings/tokens",
         "name": "Hugging Face",
     },
+    "anthropic": {
+        "env_var": "ANTHROPIC_API_KEY",
+        "signup_url": "https://console.anthropic.com/settings/keys",
+        "name": "Anthropic",
+    },
+    "xai": {
+        "env_var": "XAI_API_KEY",
+        "signup_url": "https://console.x.ai",
+        "name": "xAI (Grok)",
+    },
+    "deepseek": {
+        "env_var": "DEEPSEEK_API_KEY",
+        "signup_url": "https://platform.deepseek.com",
+        "name": "DeepSeek",
+    },
 }
 
 
@@ -51,8 +66,8 @@ class ReviewerProfile:
 DEFAULT_REVIEWERS: list[ReviewerProfile] = [
     ReviewerProfile(
         name="Security",
-        model="groq/llama-4-scout-17b-16e-instruct",
-        provider="groq",
+        model="anthropic/claude-sonnet-4-20250514",
+        provider="anthropic",
         system_prompt=(
             "You are a security-focused code reviewer. Find vulnerabilities: "
             "injection flaws, auth bypasses, insecure deserialization, hardcoded "
@@ -64,8 +79,8 @@ DEFAULT_REVIEWERS: list[ReviewerProfile] = [
     ),
     ReviewerProfile(
         name="Architecture",
-        model="groq/gemma2-9b-it",
-        provider="groq",
+        model="xai/grok-3-fast-beta",
+        provider="xai",
         system_prompt=(
             "You are an architecture reviewer. Evaluate: separation of concerns, "
             "coupling, cohesion, abstraction quality, error propagation, dependency "
@@ -76,8 +91,8 @@ DEFAULT_REVIEWERS: list[ReviewerProfile] = [
     ),
     ReviewerProfile(
         name="Performance",
-        model="mistral/mistral-small-latest",
-        provider="mistral",
+        model="anthropic/claude-sonnet-4-20250514",
+        provider="anthropic",
         system_prompt=(
             "You are a performance reviewer. Find: O(n^2+) algorithms that should be "
             "O(n log n) or O(n), unnecessary allocations, N+1 queries, missing caching "
@@ -88,8 +103,8 @@ DEFAULT_REVIEWERS: list[ReviewerProfile] = [
     ),
     ReviewerProfile(
         name="Edge Cases",
-        model="gemini/gemini-2.0-flash",
-        provider="gemini",
+        model="anthropic/claude-sonnet-4-20250514",
+        provider="anthropic",
         system_prompt=(
             "You are an edge-case and correctness reviewer. Find: unhandled None/null, "
             "empty collections, boundary values (0, -1, MAX_INT), Unicode edge cases, "
@@ -100,8 +115,8 @@ DEFAULT_REVIEWERS: list[ReviewerProfile] = [
     ),
     ReviewerProfile(
         name="Deep Reasoning",
-        model="openrouter/deepseek/deepseek-r1:free",
-        provider="openrouter",
+        model="xai/grok-3-fast-beta",
+        provider="xai",
         system_prompt=(
             "You are a deep-reasoning code reviewer. Think step by step about the code's "
             "correctness. Trace execution paths. Verify invariants. Check that error "
@@ -111,8 +126,8 @@ DEFAULT_REVIEWERS: list[ReviewerProfile] = [
     ),
     ReviewerProfile(
         name="Code Quality",
-        model="huggingface/qwen3-32b",
-        provider="huggingface",
+        model="xai/grok-3-fast-beta",
+        provider="xai",
         system_prompt=(
             "You are a code quality reviewer. Evaluate: readability, consistency, DRY "
             "violations, dead code, overly complex conditionals, magic numbers, missing "
